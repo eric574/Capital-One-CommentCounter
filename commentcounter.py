@@ -47,7 +47,7 @@ from extensions import *
 class CommentCounter(object):
     """ Determine quantitative values for different comment types
 
-    - Count the LOC (lines of code) and analyze it to determine the lines that are comments, 
+    Count the LOC (lines of code) and analyze it to determine the lines that are comments, 
       block comments, in-line comments and TODOs to provide a quantitive analysis of the code.
     """
  
@@ -57,8 +57,8 @@ class CommentCounter(object):
         self.__check_in_status = False # True when file analysis completes
 
         # Counter variables
-        self.counter_dict = {"loc":0, "tot_comments":0, "single_comments": 0,
-                             "block_comment_lines":0, "block_comments":0, "todos":0}
+        self.counter_dict = {"loc": 0, "tot_comments": 0, "single_comments": 0,
+                             "block_comment_lines": 0, "block_comments": 0, "todos": 0}
 
     def validate_filename(self) -> bool:
         """ Determine file name validity
@@ -106,12 +106,13 @@ class CommentCounter(object):
                     else:
                         bool_active_block = True
                 elif comment_syntax[0] in line:
+                    # Exiting a block
                     if bool_previous_comment and bool_active_block:
                         counter_dict["block_comments"] += 1
                         counter_dict["block_comment_lines"] += block_counter_temp
                         block_counter_temp = 0 # Reset block counter
                         bool_active_block = False
-                        bool_previous_comment = False # Exiting a block
+                        bool_previous_comment = False
 
                     # Moving from a single line comment to code with a comment
                     elif bool_previous_comment:
@@ -157,11 +158,11 @@ class CommentCounter(object):
                         counter_dict["block_comments"] += 1
                         counter_dict["block_comment_lines"] += block_counter_temp
         
-        counter_dict["tot_comments"] = \
-            counter_dict["block_comment_lines"] + counter_dict["single_comments"]
+        counter_dict["tot_comments"] = counter_dict["block_comment_lines"] + counter_dict["single_comments"]
 
         return counter_dict
     
+
     # TODO: Implement block only syntax like HTML: <!-- ... -->
     def comment_block(self, comment_syntax):
         # Local variables incrementation faster than instance incrementation, update when done
@@ -169,6 +170,7 @@ class CommentCounter(object):
                         "block_comment_lines": 0, "block_comments": 0, "todos": 0}
         # This should be pretty easy, simply a combination of a little of both.
         return counter_dict
+
 
     def comment_block_single(self, comment_syntax):
         # Local variables incrementation faster than instance incrementation, update when done
@@ -229,8 +231,7 @@ class CommentCounter(object):
                             elif line[pos:pos + pos_multi_len_open] == comment_syntax[1][0]:
                                 block_counter_temp += 1
                                 bool_active_block = True
-                                counter_dict["todos"] += \
-                                    line[(pos + pos_multi_len_open):].count(TODO)
+                                counter_dict["todos"] += line[(pos + pos_multi_len_open):].count(TODO)
                                 break
                             elif pos == -1:
                                 break
@@ -247,8 +248,7 @@ class CommentCounter(object):
                         counter_dict["block_comment_lines"] += block_counter_temp
                         block_counter_temp = 0
                         bool_active_block = False
-        counter_dict["tot_comments"] = \
-            counter_dict["block_comment_lines"] + counter_dict["single_comments"]
+        counter_dict["tot_comments"] = counter_dict["block_comment_lines"] + counter_dict["single_comments"]
         return counter_dict
     
     # Main method for comment analysis
