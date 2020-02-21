@@ -42,7 +42,7 @@ It's very simple!
 from commentcounter import *
 
 # Example:
-filename = "tests/test5.cpp"
+filename = "tests/test1.java"
 test_class = CommentCounter(filename)
 test_class.analyze_code()
 test_class.analysis_output('terminal')
